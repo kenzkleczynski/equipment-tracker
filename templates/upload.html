@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Photo - Equipment Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .logout-btn {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+        }
+        select:focus, input[type="file"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .condition-group {
+            display: flex;
+            gap: 15px;
+        }
+        .condition-option {
+            flex: 1;
+        }
+        .condition-option input[type="radio"] {
+            display: none;
+        }
+        .condition-label {
+            display: block;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .condition-option input[type="radio"]:checked + .condition-label {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        .condition-option input[type="radio"]:checked + .condition-label.damaged {
+            border-color: #f56565;
+            background: #f56565;
+        }
+        .condition-label:hover {
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #fc8181;
+        }
+        .help-text {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/" class="back-link">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Home
+            </a>
+            <div class="user-info">
+                Logged in as: <strong>{{ user.name }}</strong> | <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+        
+        <h1>📤 Upload Photo</h1>
+        
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="item">Select Equipment Item</label>
+                <select name="item" id="item" required>
+                    <option value="">-- Choose an item --</option>
+                    {% for item in items %}
+                    <option value="{{ item }}">{{ item }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Condition Status</label>
+                <div class="condition-group">
+                    <div class="condition-option">
+                        <input type="radio" name="condition" id="clear" value="Clear" required>
+                        <label for="clear" class="condition-label">✅ Clear</label>
+                    </div>
+                    <div class="condition-option">
+                        <input type="radio" name="condition" id="damaged" value="Damaged" required>
+                        <label for="damaged" class="condition-label damaged">⚠️ Damaged</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="file">Choose Photo</label>
+                <input type="file" name="file" id="file" accept="image/*" capture="environment" required>
+                <p class="help-text">Accepted formats: JPG, PNG, GIF (max 10MB)</p>
+            </div>
+            
+            <button type="submit" class="btn">Upload Photo</button>
+        </form>
+    </div>
+</body>
+</html>

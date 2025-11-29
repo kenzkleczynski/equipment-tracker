@@ -1,0 +1,5 @@
+Flask==3.0.0
+Werkzeug==3.0.1
+pymongo==4.15.4
+dnspython==2.8.0
+python-dotenv==1.0.0

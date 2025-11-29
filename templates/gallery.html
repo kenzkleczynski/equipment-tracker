@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery: {{ item }} - Equipment Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .user-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        .count {
+            color: #666;
+            font-size: 1rem;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+        .photo-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .photo-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .photo-info {
+            padding: 15px;
+        }
+        .photo-date {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .photo-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .photo-employee {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .condition-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .condition-clear {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .condition-damaged {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        .empty-state {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 60px 30px;
+            text-align: center;
+        }
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            color: #cbd5e0;
+            margin-bottom: 20px;
+        }
+        .empty-state p {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .empty-state a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .empty-state a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-top">
+                <a href="/gallery-select" class="back-link">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Selection
+                </a>
+                <div class="user-info">
+                    Logged in as: <strong>{{ user.name }}</strong>
+                </div>
+            </div>
+            
+            <h1>📸 Gallery: {{ item }}</h1>
+            <p class="count">{{ photos|length }} photo{% if photos|length != 1 %}s{% endif %} uploaded</p>
+        </div>
+        
+        {% if photos|length == 0 %}
+        <div class="empty-state">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <p>No photos yet for this item</p>
+            <a href="/upload">
+                Upload the first photo →
+            </a>
+        </div>
+        {% else %}
+        <div class="gallery">
+            {% for photo in photos %}
+            <div class="photo-card">
+                <img src="/{{ photo.path }}" alt="{{ item }} - {{ photo.date }}">
+                <div class="photo-info">
+                    <div class="photo-date">{{ photo.date }}</div>
+                    <div class="photo-meta">
+                        <span class="photo-employee">by {{ photo.employee_name }}</span>
+                        <span class="condition-badge condition-{{ photo.condition|lower }}">{{ photo.condition }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
